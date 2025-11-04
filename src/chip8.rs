@@ -63,7 +63,7 @@ impl Chip8 {
     }
 
     fn fetch_opcode(&mut self) {
-        self.current_opcode = ((self.memory[self.program_counter as usize]) << 8 | (self.memory[(self.program_counter + 1) as usize])) as u16;
+        self.current_opcode = u16::from_be_bytes([self.memory[self.program_counter as usize], self.memory[(self.program_counter + 1) as usize]])
     }
 
     fn decode_opcode(&mut self) {
