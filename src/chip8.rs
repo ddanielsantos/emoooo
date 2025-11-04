@@ -1,11 +1,3 @@
-/*
-c++ to rust conversion:
-
-char -> 8 bits - 1 byte
-short -> 16 bits - 2 bytes
-long -> 32 bits - 4 bytes
-*/
-
 static CHIP8_FONT_SET: &[u8; 80] = &[
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -27,8 +19,11 @@ static CHIP8_FONT_SET: &[u8; 80] = &[
 
 struct Chip8 {
     current_opcode: u16,
+    /// The Chip-8 language is capable of accessing up to 4KB (4,096 bytes) of RAM, from location 0x000 (0) to 0xFFF (4095). The first 512 bytes, from 0x000 to 0x1FF, are where the original interpreter was located, and should not be used by programs.
     memory: [u8; 4096],
+    /// Chip-8 has 16 general purpose 8-bit registers, usually referred to as Vx, where x is a hexadecimal digit (0 through F).
     v: [u8; 16],
+    /// There is also a 16-bit register called I. This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
     index_register: u16,
     program_counter: u16,
     gfx: [u8; 64 * 32],
@@ -40,6 +35,8 @@ struct Chip8 {
 
 const LAST_12_BITS_MASK: u16 = 0x0FFF;
 const FIRST_4_BITS_MASK: u16 = 0xF000;
+/// Most Chip-8 programs start at location 0x200 (512), but some begin at 0x600 (1536). Programs beginning at 0x600 are intended for the ETI 660 computer.
+const PROGRAM_OFFSET: u16 = 0x200;
 
 impl Chip8 {
     pub fn initialize(&mut self) {
@@ -55,10 +52,8 @@ impl Chip8 {
     }
 
     pub fn load_program(&mut self, program_buffer: &[u8]) {
-        let program_offset = 0x200;
-
         for (i, &byte) in program_buffer.iter().enumerate() {
-            self.memory[program_offset + i] = byte;
+            self.memory[(PROGRAM_OFFSET as usize) + i] = byte;
         }
     }
 
@@ -94,6 +89,7 @@ impl Chip8 {
         }
     }
 
+    /// Chip-8 also has two special purpose 8-bit registers, for the delay and sound timers. When these registers are non-zero, they are automatically decremented at a rate of 60Hz.
     fn update_timers(&mut self) {
         if self.delay_timer > 0 {
             self.delay_timer -= 1;
