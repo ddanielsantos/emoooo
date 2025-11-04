@@ -120,6 +120,12 @@ impl Chip8 {
                     self.program_counter += 2;
                 }
             }
+            // SNE Vx, byte
+            0x4000 => {
+                if self.v[second_1_n as usize] != last_2_n {
+                    self.program_counter += 2;
+                }
+            }
             _ => {
                 eprint!("Invalid opcode 0x{:X}", self.current_opcode);
             }
