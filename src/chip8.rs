@@ -86,8 +86,10 @@ impl Chip8 {
     }
 
     fn decode_opcode(&mut self) {
-        let first_four_bits = self.current_opcode & FIRST_4_BITS_MASK;
-        match first_four_bits {
+        let first_1_n = self.current_opcode & FIRST_4_BITS_MASK;
+        let last_3_n = self.current_opcode & LAST_12_BITS_MASK;
+
+        match first_1_n {
             0x0000 => match self.current_opcode {
                 // CLS
                 0x00E0 => self.clear_screen(),
@@ -95,18 +97,19 @@ impl Chip8 {
                 0x00EE => todo!("RETURNS A SUBROUTINE"),
                 // 0NNN
                 _ => {
-                    let addr = self.current_opcode & LAST_12_BITS_MASK;
-                    println!("calling machine routine for {}", addr);
+                    println!("calling machine routine for {}", last_3_n);
                 }
             },
             // JP
             0x1000 => {
-                let addr = self.current_opcode & LAST_12_BITS_MASK;
-                self.program_counter = addr;
+                self.program_counter = last_3_n;
             },
+            // CALL addr
             0x2000 => {
-
-            }
+                self.stack_pointer += 1;
+                self.stack[self.stack_pointer as usize] = self.program_counter;
+                self.program_counter = last_3_n;
+            },
             _ => {
                 eprint!("Invalid opcode 0x{:X}", self.current_opcode);
             }
