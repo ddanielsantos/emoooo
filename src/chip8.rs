@@ -80,8 +80,14 @@ impl Chip8 {
                     println!("calling machine routine for {}", addr);
                 }
             },
-            // JMP
-            0x1000 => todo!("JUMPS TO SOMEWHERE"),
+            // JP
+            0x1000 => {
+                let addr = self.current_opcode & LAST_12_BITS_MASK;
+                self.program_counter = addr;
+            },
+            0x2000 => {
+
+            }
             _ => {
                 eprint!("Invalid opcode 0x{:X}", self.current_opcode);
             }
