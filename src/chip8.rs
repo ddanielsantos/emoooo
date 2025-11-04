@@ -41,7 +41,13 @@ struct Chip8 {
 const LAST_12_BITS_MASK: u16 = 0x0FFF;
 const FIRST_4_BITS_MASK: u16 = 0xF000;
 /// Most Chip-8 programs start at location 0x200 (512), but some begin at 0x600 (1536). Programs beginning at 0x600 are intended for the ETI 660 computer.
-const PROGRAM_OFFSET: u16 = 0x200;
+const CHIP8_PROGRAM_OFFSET: u16 = 0x200;
+const ETI660_PROGRAM_OFFSET: u16 = 0x600;
+
+enum ProgramKind {
+    CHIP8,
+    ETI660
+}
 
 impl Chip8 {
     pub fn initialize(&mut self) {
@@ -56,9 +62,22 @@ impl Chip8 {
         }
     }
 
-    pub fn load_program(&mut self, program_buffer: &[u8]) {
+    pub fn load_program(&mut self, program: &[u8], kind: ProgramKind) {
+        match kind {
+            ProgramKind::CHIP8 => self.load_chip8_program(program),
+            ProgramKind::ETI660 => self.load_eti660_program(program),
+        }
+    }
+
+    fn load_chip8_program(&mut self, program_buffer: &[u8]) {
         for (i, &byte) in program_buffer.iter().enumerate() {
-            self.memory[(PROGRAM_OFFSET as usize) + i] = byte;
+            self.memory[(CHIP8_PROGRAM_OFFSET as usize) + i] = byte;
+        }
+    }
+
+    fn load_eti660_program(&mut self, program_buffer: &[u8]) {
+        for (i, &byte) in program_buffer.iter().enumerate() {
+            self.memory[(ETI660_PROGRAM_OFFSET as usize) + i] = byte;
         }
     }
 
