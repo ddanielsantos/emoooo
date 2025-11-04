@@ -42,6 +42,7 @@ const LAST_12_BITS_MASK: u16 = 0x0FFF;
 const LAST_8_BITS_MASK: u16 = 0x00FF;
 const FIRST_4_BITS_MASK: u16 = 0xF000;
 const SECOND_4_BITS_MASK: u16 = 0x0F00;
+const THIRD_4_BITS_MASK: u16 = 0x00F0;
 /// Most Chip-8 programs start at location 0x200 (512), but some begin at 0x600 (1536). Programs beginning at 0x600 are intended for the ETI 660 computer.
 const CHIP8_PROGRAM_OFFSET: u16 = 0x200;
 const ETI660_PROGRAM_OFFSET: u16 = 0x600;
@@ -90,6 +91,7 @@ impl Chip8 {
     fn decode_opcode(&mut self) {
         let first_1_n = self.current_opcode & FIRST_4_BITS_MASK;
         let second_1_n = (self.current_opcode & SECOND_4_BITS_MASK) >> 8;
+        let third_1_n = (self.current_opcode & THIRD_4_BITS_MASK) >> 4;
         let last_2_n: u8 = (self.current_opcode & LAST_8_BITS_MASK) as u8;
         let last_3_n = self.current_opcode & LAST_12_BITS_MASK;
 
@@ -123,6 +125,12 @@ impl Chip8 {
             // SNE Vx, byte
             0x4000 => {
                 if self.v[second_1_n as usize] != last_2_n {
+                    self.program_counter += 2;
+                }
+            }
+            // SE Vx, Vy
+            0x5000 => {
+                if self.v[second_1_n as usize] == self.v[third_1_n as usize] {
                     self.program_counter += 2;
                 }
             }
