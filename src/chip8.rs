@@ -25,10 +25,15 @@ struct Chip8 {
     v: [u8; 16],
     /// There is also a 16-bit register called I. This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
     index_register: u16,
+    /// Used to store the currently executing address.
     program_counter: u16,
+    /// The original implementation of the Chip-8 language used a 64x32-pixel monochrome display.
     gfx: [u8; 64 * 32],
+    /// The delay timer is active whenever the delay timer register (DT) is non-zero. This timer does nothing more than subtract 1 from the value of DT at a rate of 60Hz. When DT reaches 0, it deactivates.
     delay_timer: u8,
+    /// The sound timer is active whenever the sound timer register (ST) is non-zero. This timer also decrements at a rate of 60Hz, however, as long as ST's value is greater than zero, the Chip-8 buzzer will sound. When ST reaches zero, the sound timer deactivates.
     sound_timer: u8,
+    /// Used to point to the topmost level of the stack.
     stack_pointer: u16,
     stack: [u16; 16],
 }
@@ -45,7 +50,7 @@ impl Chip8 {
         self.index_register = 0;
         self.stack_pointer = 0;
 
-        // load font-set
+        // The data should be stored in the interpreter area of Chip-8 memory
         for (i, item) in CHIP8_FONT_SET.iter().enumerate().take(80) {
             self.memory[i] = *item;
         }
