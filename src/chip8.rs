@@ -53,6 +53,8 @@ enum ProgramKind {
     ETI660
 }
 
+const F: usize = 0xF;
+
 impl Chip8 {
     pub fn initialize(&mut self) {
         self.program_counter = 0x200;
@@ -161,12 +163,12 @@ impl Chip8 {
                     0x4 => {
                         let (sum, overflowing) = self.v[x as usize].overflowing_add(self.v[y as usize]);
                         self.v[x as usize] = sum;
-                        self.v[0xF] = if overflowing { 1 } else { 0 }
+                        self.v[F] = if overflowing { 1 } else { 0 }
                     },
                     // SUB Vx, Vy
                     0x5 => {
                         let x_bigger = self.v[x as usize] > self.v[y as usize];
-                        self.v[0xF] = if x_bigger { 1 } else { 0 }
+                        self.v[F] = if x_bigger { 1 } else { 0 }
                     },
                     _ => todo!()
                 }
