@@ -176,6 +176,11 @@ impl Chip8 {
                         self.v[F] = if x_lsb == 1 { 1 } else { 0 };
                         self.v[x as usize] >>= 1;
                     },
+                    // SUBN Vx, Vy
+                    0x7 => {
+                        let y_bigger = self.v[y as usize] > self.v[x as usize];
+                        self.v[F] = if y_bigger { 1 } else { 0 }
+                    },
                     _ => todo!()
                 }
             }
