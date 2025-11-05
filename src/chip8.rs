@@ -170,6 +170,12 @@ impl Chip8 {
                         let x_bigger = self.v[x as usize] > self.v[y as usize];
                         self.v[F] = if x_bigger { 1 } else { 0 }
                     },
+                    // SHR Vx {, Vy}
+                    0x6 => {
+                        let x_lsb = self.v[x as usize] & 1;
+                        self.v[F] = if x_lsb == 1 { 1 } else { 0 };
+                        self.v[x as usize] >>= 1;
+                    },
                     _ => todo!()
                 }
             }
