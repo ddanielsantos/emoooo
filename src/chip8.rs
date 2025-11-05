@@ -91,8 +91,8 @@ impl Chip8 {
 
     fn decode_opcode(&mut self) {
         let first_1_n = self.current_opcode & FIRST_4_BITS_MASK;
-        let second_1_n = (self.current_opcode & SECOND_4_BITS_MASK) >> 8;
-        let third_1_n = (self.current_opcode & THIRD_4_BITS_MASK) >> 4;
+        let x = (self.current_opcode & SECOND_4_BITS_MASK) >> 8;
+        let y = (self.current_opcode & THIRD_4_BITS_MASK) >> 4;
         let fourth_1_n = self.current_opcode & FOURTH_4_BITS_MASK;
         let last_2_n: u8 = (self.current_opcode & LAST_8_BITS_MASK) as u8;
         let last_3_n = self.current_opcode & LAST_12_BITS_MASK;
@@ -123,50 +123,50 @@ impl Chip8 {
             },
             // SE Vx, byte
             0x3000 => {
-                if self.v[second_1_n as usize] == last_2_n {
+                if self.v[x as usize] == last_2_n {
                     self.program_counter += 2;
                 }
             }
             // SNE Vx, byte
             0x4000 => {
-                if self.v[second_1_n as usize] != last_2_n {
+                if self.v[x as usize] != last_2_n {
                     self.program_counter += 2;
                 }
             }
             // SE Vx, Vy
             0x5000 => {
-                if self.v[second_1_n as usize] == self.v[third_1_n as usize] {
+                if self.v[x as usize] == self.v[y as usize] {
                     self.program_counter += 2;
                 }
             }
             // LD Vx, byte
             0x6000 => {
-                self.v[second_1_n as usize] = last_2_n;
+                self.v[x as usize] = last_2_n;
             }
             // ADD Vx, byte
             0x7000 => {
-                self.v[second_1_n as usize] += last_2_n;
+                self.v[x as usize] += last_2_n;
             }
             0x8000 => {
                 match fourth_1_n {
                     // LD Vx, Vy
-                    0x0 => self.v[second_1_n as usize] = self.v[third_1_n as usize],
+                    0x0 => self.v[x as usize] = self.v[y as usize],
                     // OR Vx, Vy
-                    0x1 => self.v[second_1_n as usize] |= self.v[third_1_n as usize],
+                    0x1 => self.v[x as usize] |= self.v[y as usize],
                     // AND Vx, Vy
-                    0x2 => self.v[second_1_n as usize] &= self.v[third_1_n as usize],
+                    0x2 => self.v[x as usize] &= self.v[y as usize],
                     // XOR Vx, Vy
-                    0x3 => self.v[second_1_n as usize] ^= self.v[third_1_n as usize],
+                    0x3 => self.v[x as usize] ^= self.v[y as usize],
                     // ADD Vx, Vy
                     0x4 => {
-                        let (sum, overflowing) = self.v[second_1_n as usize].overflowing_add(self.v[third_1_n as usize]);
-                        self.v[second_1_n as usize] = sum;
+                        let (sum, overflowing) = self.v[x as usize].overflowing_add(self.v[y as usize]);
+                        self.v[x as usize] = sum;
                         self.v[0xF] = if overflowing { 1 } else { 0 }
                     },
                     // SUB Vx, Vy
                     0x5 => {
-                        let l_bigger = self.v[second_1_n as usize] > self.v[third_1_n as usize];
-                        self.v[0xF] = if l_bigger { 1 } else { 0 }
+                        let x_bigger = self.v[x as usize] > self.v[y as usize];
+                        self.v[0xF] = if x_bigger { 1 } else { 0 }
                     },
                     _ => todo!()
                 }
