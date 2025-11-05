@@ -138,6 +138,10 @@ impl Chip8 {
             0x6000 => {
                 self.v[second_1_n as usize] = last_2_n;
             }
+            // ADD Vx, byte
+            0x7000 => {
+                self.v[second_1_n as usize] += last_2_n;
+            }
             _ => {
                 eprint!("Invalid opcode 0x{:X}", self.current_opcode);
             }
