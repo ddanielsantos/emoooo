@@ -149,7 +149,7 @@ impl Chip8 {
                     // LD Vx, Vy
                     0x0 => self.v[second_1_n as usize] = self.v[third_1_n as usize],
                     // OR Vx, Vy
-                    0x1 => todo!(),
+                    0x1 => self.v[second_1_n as usize] |= self.v[third_1_n as usize],
                     _ => todo!()
                 }
             }
