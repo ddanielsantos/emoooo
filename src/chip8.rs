@@ -102,7 +102,10 @@ impl Chip8 {
                 // CLS
                 0x00E0 => self.clear_screen(),
                 // RET
-                0x00EE => todo!("RETURNS A SUBROUTINE"),
+                0x00EE => {
+                    self.program_counter = self.stack[self.stack_pointer as usize];
+                    self.stack_pointer -= 1;
+                },
                 // 0NNN
                 _ => {
                     println!("calling machine routine for {}", last_3_n);
