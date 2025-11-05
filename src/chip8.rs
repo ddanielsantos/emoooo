@@ -155,6 +155,8 @@ impl Chip8 {
                     0x1 => self.v[second_1_n as usize] |= self.v[third_1_n as usize],
                     // AND Vx, Vy
                     0x2 => self.v[second_1_n as usize] &= self.v[third_1_n as usize],
+                    // XOR Vx, Vy
+                    0x3 => self.v[second_1_n as usize] ^= self.v[third_1_n as usize],
                     _ => todo!()
                 }
             }
