@@ -163,6 +163,11 @@ impl Chip8 {
                         self.v[second_1_n as usize] = sum;
                         self.v[0xF] = if overflowing { 1 } else { 0 }
                     },
+                    // SUB Vx, Vy
+                    0x5 => {
+                        let l_bigger = self.v[second_1_n as usize] > self.v[third_1_n as usize];
+                        self.v[0xF] = if l_bigger { 1 } else { 0 }
+                    },
                     _ => todo!()
                 }
             }
