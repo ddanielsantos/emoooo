@@ -157,6 +157,12 @@ impl Chip8 {
                     0x2 => self.v[second_1_n as usize] &= self.v[third_1_n as usize],
                     // XOR Vx, Vy
                     0x3 => self.v[second_1_n as usize] ^= self.v[third_1_n as usize],
+                    // ADD Vx, Vy
+                    0x4 => {
+                        let (sum, overflowing) = self.v[second_1_n as usize].overflowing_add(self.v[third_1_n as usize]);
+                        self.v[second_1_n as usize] = sum;
+                        self.v[0xF] = if overflowing { 1 } else { 0 }
+                    },
                     _ => todo!()
                 }
             }
