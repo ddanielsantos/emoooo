@@ -54,7 +54,7 @@ impl ApplicationHandler for App {
                     p.set_present_mode(PresentMode::Immediate);
                     Some(p)
                 },
-                Err(e) => {
+                Err(_e) => {
                     event_loop.exit();
                     None
                 }
@@ -94,7 +94,7 @@ impl ApplicationHandler for App {
             _ => (),
         }
     }
-    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+    fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
         if let Some(window) = &self.window {
             let now = Instant::now();
             if now.duration_since(self.fps_debug.last_frame) >= FRAME_TIME {
