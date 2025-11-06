@@ -1,3 +1,5 @@
+use rand::Rng;
+
 static CHIP8_FONT_SET: &[u8; 80] = &[
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -203,6 +205,12 @@ impl Chip8 {
             // JP V0, addr
             0xB000 => {
                 self.program_counter = last_3_n + self.v[0] as u16;
+            }
+            // RND Vx, byte
+            0xC000 => {
+                let mut rng = rand::rng();
+                let random: u8 = rng.random();
+                self.v[x as usize] = random & last_2_n;
             }
             _ => {
                 eprint!("Invalid opcode 0x{:X}", self.current_opcode);
