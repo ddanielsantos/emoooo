@@ -190,6 +190,12 @@ impl Chip8 {
                     _ => todo!()
                 }
             }
+            // SNE Vx, Vy
+            0x9000 => {
+                if self.v[x as usize] != self.v[y as usize] {
+                    self.program_counter += 2;
+                }
+            }
             _ => {
                 eprint!("Invalid opcode 0x{:X}", self.current_opcode);
             }
