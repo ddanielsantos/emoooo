@@ -196,6 +196,10 @@ impl Chip8 {
                     self.program_counter += 2;
                 }
             }
+            // LD I, addr
+            0xA000 => {
+                self.index_register = last_3_n;
+            }
             _ => {
                 eprint!("Invalid opcode 0x{:X}", self.current_opcode);
             }
