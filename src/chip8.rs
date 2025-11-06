@@ -200,6 +200,10 @@ impl Chip8 {
             0xA000 => {
                 self.index_register = last_3_n;
             }
+            // JP V0, addr
+            0xB000 => {
+                self.program_counter = last_3_n + self.v[0] as u16;
+            }
             _ => {
                 eprint!("Invalid opcode 0x{:X}", self.current_opcode);
             }
